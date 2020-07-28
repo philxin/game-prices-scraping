@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>local.scrape_game_prices</string>
+        <key>Program</key>
+		<string>YOUR_SHELL_SCRIPT_PATH</string>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PYTHONPATH</key>
+		<string>YOUR_PYTHON_PATH</string>
+	</dict>
+	<key>RunAtLoad</key>
+		<true/>
+	<key>ThrottleInterval</key>
+		<integer>60</integer>
+	<key>StartCalendarInterval</key>
+	<array>
+        	 <dict> 
+            	 <key>Hour</key> 
+           		 <integer>20</integer> 
+           	 <key>Minute</key> 
+           		 <integer>0</integer>
+       		 </dict>
+       		 <dict> 
+        	 <key>Hour</key> 
+ 	        	 <integer>11</integer> 
+           	 <key>Minute</key> 
+           	 	<integer>0</integer> 
+   	 	</dict>
+	</array>
+	<key>StandardOutPath</key>
+		<string>/tmp/scrape_test.stdout</string>
+	<key>StandardErrorPath</key>
+		<string>/tmp/scrape_test.stderr</string>
+    </dict>
+</plist>
