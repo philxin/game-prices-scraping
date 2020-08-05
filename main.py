@@ -249,6 +249,11 @@ URLs =[
        "https://gg.deals/game/disintegration/",
        "https://gg.deals/pack/dragon-age-inquisition-game-of-the-year-edition/",
        "https://gg.deals/game/tales-of-vesperia-definitive-edition/",
+       "https://gg.deals/game/youtubers-life/",
+       "https://gg.deals/pack/battlefield-4-premium-edition/",
+       "https://gg.deals/game/we-happy-few/",
+       "https://gg.deals/game/fall-guys-ultimate-knockout/",
+       "https://gg.deals/game/grounded/",
        #"https://gg.deals/game/ghostrunner/",
       ]
 
