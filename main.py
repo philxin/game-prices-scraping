@@ -121,4 +121,4 @@ with open(abs_dir + '/last_update_date.txt', 'w') as file:
 
 # call another python script to trigger AWS Lambda function to send notification through AWS SNS
 # Lambda function and SNS are configured on AWS console beforehand
-os.system("python3 lambda_trigger.py")
+os.system("python3 " + abs_dir.replace(' ', '\ ') + "/lambda_trigger.py")
