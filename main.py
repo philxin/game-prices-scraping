@@ -39,6 +39,7 @@ with open(abs_dir + '/game_prices_urls.txt') as url_file:
 	for i in range(len(URLs)):
 		URLs[i] = URLs[i].replace("\n","").replace(" ","")
 
+# create database connection
 conn = None
 try:
     conn = sqlite3.connect(abs_dir + '/game_prices.db')
