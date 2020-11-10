@@ -7,14 +7,18 @@ import sys
 import os
 import shutil
 
+# get the absolute path of where this script is
 abs_dir = os.path.dirname(os.path.abspath(__file__))
 
+# get date & time
 utc_date_now = datetime.datetime.utcnow().strftime("%m/%d/%Y")
 last_update_date = ""
 
+# open the file which saves the date of last scraping job
 with open(abs_dir + "/last_update_date.txt",'r') as file:
 	last_update_date = file.readlines(1)[0]
 
+# if scraping job has been done for the day, end this program
 if last_update_date == utc_date_now:
 	print("Today's scraping has been done.", datetime.datetime.now().strftime("%H:%M:%S"))
 	sys.exit()
@@ -38,6 +42,7 @@ with open(abs_dir + '/game_prices_urls.txt') as url_file:
 	URLs = url_file.readlines()
 	for i in range(len(URLs)):
 		URLs[i] = URLs[i].replace("\n","").replace(" ","")
+
 
 # create database connection
 conn = None
@@ -63,19 +68,21 @@ for url in URLs:
 
 	data = json.loads(soup.find('script', type='application/ld+json').text)
 
-
+	# only scrape prices from stores listed below
 	trusted_sellers = ['Steam','Gog.com','Humble Store','Epic Games Store',
 	                   'Ubisoft Store','Fanatical', 'WinGameStore','Indie Gala Store',
 	                  'Origin', 'Green Man Gaming','Gamesplanet US','2Game US','Gamebillet',
 	                  "Microsoft Store","Amazon.com","Battle.net","Voidu","DLGamer.com",
 	                  "Allyouplay","Bethesda","GamersGate"]
 
+	# navigate the scraped json file to get price data
 	store_prices = {}
 	for offer in data['offers']['offers']:
 	    if offer['seller']['name'] in trusted_sellers:
 	        lowest_price_of_stores(store_prices, offer['seller']['name'],
 	                               offer['price'])
 
+	# generate SQL command for creating new table
 	table_name = url.replace("https://gg.deals/","").replace("game","").replace("dlc","").replace("pack","").replace("/","").replace('-','_')
 	print(table_name)
 	sql_commd = f"""
@@ -86,21 +93,23 @@ for url in URLs:
 	"""
 	c.execute(sql_commd)
 
+	# SQL command for creating new column for an online store
 	for store in list((store_prices.keys())):
 	    try:
 	        c.execute(f"ALTER TABLE {table_name} ADD COLUMN \"{store}\" float64")
 	    except:
 	        pass
 
+	# record scraping date & time
 	date_now = "\"" + datetime.datetime.utcnow().strftime("%m/%d/%Y") + "\""
 	time_now = "\"" + datetime.datetime.utcnow().strftime("%H:%M:%S") + "\""
-	#print(date_now, time_now)
+
 	col_str = ', '.join(list(store_prices.keys())).replace(", ","\", \"")
 	col_str = "\"" + col_str + "\""
-	#print(col_str)
-	val_str = str(list(store_prices.values())).replace("[","").replace("]","")
-	#print(val_str)
 
+	val_str = str(list(store_prices.values())).replace("[","").replace("]","")
+
+	# insert a new observation
 	sql_insert_row = f"""INSERT INTO {table_name} (date, time, {col_str})
 	VALUES ({date_now}, {time_now}, {val_str})"""
 
@@ -108,14 +117,14 @@ for url in URLs:
 	conn.commit()
 
 conn.close()
-print("Done",datetime.datetime.now().strftime("%H:%M:%S"))
+print("Done",datetime.datetime.now().strftime("%H:%M:%S")) # print the message of finishing job
 
 # backup the whole database
 backup_src = abs_dir + '/game_prices.db'
 backup_dest = abs_dir + '/backup_db/game_prices_backup.db'
 shutil.copyfile(backup_src, backup_dest)
 
-
+# write the date (UTC) into the file to prevent running this program again in the same day
 with open(abs_dir + '/last_update_date.txt', 'w') as file:
     file.write(datetime.datetime.utcnow().strftime("%m/%d/%Y"))
 
