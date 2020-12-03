@@ -49,7 +49,7 @@ conn = None
 try:
     conn = sqlite3.connect(abs_dir + '/game_prices.db')
     print(sqlite3.version)
-except Error as e:
+except Exception as e:
     print(e)
 c = conn.cursor()
 print("Start",datetime.datetime.now().strftime("%H:%M:%S"))
@@ -58,15 +58,19 @@ for url in URLs:
 	try:
 		r = requests.get(url)
 		soup = BeautifulSoup(r.content, 'html5lib')
-	except Error as e:
+		data = json.loads(soup.find('script', type='application/ld+json').text)
+
+	except AttributeError:
+		print(url, "page not found.")
+		continue
+		
+	except Exception as e:
 		print(e)
 		# retr_dest = 'game_prices.db'
 		# retr_src = 'backup_db/game_prices_backup.db'
 		# shutil.copyfile(retr_src, rete_dest)
 		# print("Backup retrived.")
 		sys.exit()
-
-	data = json.loads(soup.find('script', type='application/ld+json').text)
 
 	# only scrape prices from stores listed below
 	trusted_sellers = ['Steam','Gog.com','Humble Store','Epic Games Store',
