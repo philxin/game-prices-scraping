@@ -77,7 +77,7 @@ for url in URLs:
 	                   'Ubisoft Store','Fanatical', 'WinGameStore','Indie Gala Store',
 	                  'Origin', 'Green Man Gaming','Gamesplanet US','2Game US','Gamebillet',
 	                  "Microsoft Store","Amazon.com","Battle.net","Voidu","DLGamer.com",
-	                  "Allyouplay","Bethesda","GamersGate"]
+	                  "Allyouplay","Bethesda","GamersGate","Escape From Tarkov"]
 
 	# navigate the scraped json file to get price data
 	store_prices = {}
