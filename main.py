@@ -7,6 +7,18 @@ import sys
 import os
 import shutil
 
+"""
+Usage: python3 main.py AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+"""
+
+
+try:
+	AWS_ACCESS_KEY_ID = sys.argv[1]
+	AWS_SECRET_ACCESS_KEY = sys.argv[2]
+except:
+	print("Wrong arguments.")
+	sys.exit(1)
+
 # get the absolute path of where this script is
 abs_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -88,7 +100,14 @@ for url in URLs:
 
 	# generate SQL command for creating new table
 	table_name = url.replace("https://gg.deals/","").replace("game","").replace("dlc","").replace("pack","").replace("/","").replace('-','_')
+	
+	# if the store_prices dictionary is empty
+	if not bool(store_prices):
+		print("No prices of official stores for", table_name)
+		continue
+
 	print(table_name)
+
 	sql_commd = f"""
 	CREATE TABLE IF NOT EXISTS {table_name} (
 	    date date NOT NULL,
@@ -135,4 +154,4 @@ with open(abs_dir + '/last_update_date.txt', 'w') as file:
 
 # call another python script to trigger AWS Lambda function to send notification through AWS SNS
 # Lambda function and SNS are configured on AWS console beforehand
-os.system("python3 " + abs_dir.replace(' ', '\ ') + "/lambda_trigger.py")
+os.system("python3 " + abs_dir.replace(' ', '\ ') + "/lambda_trigger.py " + AWS_ACCESS_KEY_ID + " " + AWS_SECRET_ACCESS_KEY)
